@@ -10,6 +10,11 @@ pygame.display.set_caption('Titel: Animate!')
 
 BLUE  = (0,0,255)
 BLACK  = (0,0,0)
+WHITE  = (255,255,255)
+UP = 'up'
+DOWN = 'down'
+LEFT = 'left'
+RIGHT = 'right'
 
 class Dir:
     def __init__(self):
@@ -24,29 +29,19 @@ class Dir:
 
 class Circle:
     def __init__(self, surface):
-        self.x = int(math.floor(random.random()*500))
-        self.y = int(math.floor(random.random()*400))
+        self.x = int(math.floor(random.random()*398)+51)
+        self.y = int(math.floor(random.random()*298)+51)
         self.surface = surface
 
-    def set(self, x=None, y=None, ax=None, ay=None):
-        if x is not None:
-            self.x = x
-        if y is not None:
-            self.y = y
-        if ax is not None:
-            self.x += ax
-        if ay is not None:
-            self.y += ay
-
     def move(self, dir=None):
-        if dir is 'up':
-            self.y -= 10
-        if dir is 'down':
+        if dir is UP:
+            self.y -= 50
+        if dir is DOWN:
             self.y += 10
-        if dir is 'left':
-            self.x -= 10
-        if dir is 'right':
-            self.x += 10
+        if dir is LEFT:
+            self.x -= 8
+        if dir is RIGHT:
+            self.x += 8
 
     def get(self):
         return {'x': self.x, 'y': self.y}
@@ -57,32 +52,50 @@ class Circle:
 direction = 'left'
 d = Dir()
 c = Circle(DISPLAYSURF)
+cMovingLeft = False
+cMovingRight= False
+cMovingDown= False
+cJumping= False
+
+def terminate():
+    pygame.quit()
+    sys.exit()
 
 while True:
-        DISPLAYSURF.fill(BLACK)
-	if d.dir() == 'right':
-                c.move('right')
-		if c.get()['x'] >= 450:
-			d.nextDir()
-	if d.dir() == 'down':
-                c.move('down')
-		if c.get()['y'] >= 350:
-			d.nextDir()
-	if d.dir() == 'left':
-                c.move('left')
-		if c.get()['x'] <= 50:
-			d.nextDir()
-	if d.dir() == 'up':
-                c.move('up')
-		if c.get()['y'] <= 50:
-			d.nextDir()
+    DISPLAYSURF.fill(WHITE)
+    c.draw()
 
-        c.draw()
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            terminate()
+        elif event.type == KEYDOWN:
+            if event.key == K_a:
+                c.move(LEFT)
+                cMovingLeft = True
+            if event.key == K_d:
+                c.move (RIGHT)
+                cMovingRight = True
+            if event.key == K_w and cJumping == False:
+                cJumping = True
+        elif event.type == KEYUP:
+            if event.key == K_a:
+                cMovingLeft = False
+            if event.key == K_d:
+                cMovingRight = False
 
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			pygame.quit()
-			sys.exit()
+    if cMovingLeft == True:
+        c.move(LEFT)
+    if cMovingRight == True:
+        c.move(RIGHT)
+    if cMovingDown == True:
+        c.move(DOWN)
+    if cJumping == True:
+        c.move(UP)
+    if c.get()['y'] <= 350:
+        cJumping = False
+        cMovingDown = True
+    if c.get()['y'] >= 373:
+        cMovingDown = False
 
-	pygame.display.update()
-        fpsClock.tick(FPS)
+    pygame.display.update()
+    fpsClock.tick(FPS)
