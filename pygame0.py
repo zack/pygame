@@ -38,6 +38,16 @@ class Circle:
         if ay is not None:
             self.y += ay
 
+    def move(self, dir=None):
+        if dir is 'up':
+            self.y -= 10
+        if dir is 'down':
+            self.y += 10
+        if dir is 'left':
+            self.x -= 10
+        if dir is 'right':
+            self.x += 10
+
     def get(self):
         return {'x': self.x, 'y': self.y}
 
@@ -51,19 +61,19 @@ c = Circle(DISPLAYSURF)
 while True:
         DISPLAYSURF.fill(BLACK)
 	if d.dir() == 'right':
-		c.set(ax=10)
+                c.move('right')
 		if c.get()['x'] >= 450:
 			d.nextDir()
 	if d.dir() == 'down':
-		c.set(ay=10)
+                c.move('down')
 		if c.get()['y'] >= 350:
 			d.nextDir()
 	if d.dir() == 'left':
-		c.set(ax=-10)
+                c.move('left')
 		if c.get()['x'] <= 50:
 			d.nextDir()
 	if d.dir() == 'up':
-		c.set(ay=-10)
+                c.move('up')
 		if c.get()['y'] <= 50:
 			d.nextDir()
 
